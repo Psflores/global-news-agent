@@ -591,39 +591,53 @@ def _print_post_preview(post: dict):
 def _append_to_pipeline_queue(posts: list):
     """
     Agrega los posts generados a la cola del pipeline de Coraline
-    para que aparezcan en el flujo de revisión existente.
+    en el formato exacto que espera 06_daily_post.py:
+      {"next_index": N, "posts": [{id, image, posted, caption, image_url, ...}]}
     """
     queue_file = CORALINE_PIPELINE_DIR / "content" / "posts_queue.json"
 
     try:
-        existing = []
+        # Cargar la estructura real del queue (dict, no lista)
+        queue_data = {"next_index": 0, "posts": []}
         if queue_file.exists():
             with open(queue_file, "r", encoding="utf-8") as f:
-                existing = json.load(f)
+                queue_data = json.load(f)
+
+        existing_posts = queue_data.get("posts", [])
+
+        # Calcular el próximo ID numérico correlativo
+        existing_ids = [p["id"] for p in existing_posts if isinstance(p.get("id"), int)]
+        next_id = (max(existing_ids) + 1) if existing_ids else 1
 
         for post in posts:
+            caption_full = f"{post['caption']['text']}\n\n{post['caption']['hashtags']}"
             queue_entry = {
-                "id": f"news_{post['date']}_{post['rank']}",
-                "created_at": datetime.now(timezone.utc).isoformat(),
-                "source": "global_news_agent",
-                "status": "pending_review",
-                "caption": post["caption"]["full_post"],
+                "id": next_id,
+                "image": f"[noticia #{post['rank']} — {post['news']['category']}]",
+                "posted": False,
+                "caption": caption_full,
                 "image_url": post["image"]["url"],
-                "image_scene": post["image"]["scene"],
-                "news_headline": post["news"]["headline"],
-                "news_category": post["news"]["category"],
+                # Metadatos extra para trazabilidad (ignorados por 06_daily_post.py)
+                "source": "global_news_agent",
+                "news_headline": post["news"]["headline"][:80],
                 "news_score": post["news"]["score"],
-                "platforms": post["platforms"],
+                "image_scene": post["image"]["scene"],
+                "created_at": datetime.now(timezone.utc).isoformat(),
             }
-            existing.append(queue_entry)
+            existing_posts.append(queue_entry)
+            next_id += 1
+
+        queue_data["posts"] = existing_posts
+        # next_index no se modifica: 06_daily_post.py lo avanza al publicar
 
         with open(queue_file, "w", encoding="utf-8") as f:
-            json.dump(existing, f, ensure_ascii=False, indent=2)
+            json.dump(queue_data, f, ensure_ascii=False, indent=2)
 
-        print(f"   ✅ Posts agregados a la cola del pipeline de Coraline ({queue_file.name})")
+        print(f"   ✅ Posts agregados a la cola: {queue_file.name} (IDs {next_id - len(posts)}–{next_id - 1})")
 
     except Exception as e:
         print(f"   ⚠️ No se pudo agregar a la cola: {e}")
+        import traceback; traceback.print_exc()
 
 
 # ─────────────────────────────────────────────────────────────────────────────
