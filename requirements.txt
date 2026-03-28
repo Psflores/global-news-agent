@@ -1,0 +1,65 @@
+# Global News Agent — Dependencias Python
+# Instalar con: pip install -r requirements.txt
+# (En sistemas con restricciones: pip install -r requirements.txt --break-system-packages)
+
+# ─── INGESTA DE NOTICIAS ──────────────────────────────────────────────────────
+
+# Parser de RSS/Atom — estándar de facto, battle-tested
+feedparser>=6.0.10
+
+# Extractor de artículos completos desde URLs
+newspaper4k>=0.9.3
+
+# Detección de idioma
+langdetect>=1.0.9
+
+# HTTP client (usado internamente por feedparser y newspaper4k)
+requests>=2.31.0
+
+# ─── NLP Y EMBEDDINGS ─────────────────────────────────────────────────────────
+
+# Embeddings multilingüe (100+ idiomas) — el más importante del stack
+# Descarga automáticamente el modelo paraphrase-multilingual-MiniLM-L12-v2
+sentence-transformers>=2.7.0
+
+# ML: clustering DBSCAN, TF-IDF fallback, métricas de similitud
+scikit-learn>=1.4.0
+
+# Arrays numéricos (requerido por sentence-transformers y sklearn)
+numpy>=1.26.0
+
+# ─── DEDUPLICACIÓN ────────────────────────────────────────────────────────────
+
+# MinHash LSH para near-duplicate detection eficiente
+datasketch>=1.6.5
+
+# ─── UTILIDADES ───────────────────────────────────────────────────────────────
+
+# Progreso en loops largos
+tqdm>=4.66.0
+
+# Variables de entorno (para API keys opcionales)
+python-dotenv>=1.0.0
+
+# Timezone handling
+pytz>=2024.1
+
+# ─── OPCIONALES (para features avanzadas) ─────────────────────────────────────
+
+# NER multilingüe avanzado (entidades: países, organizaciones, personas)
+# Descomentar para instalar:
+# spacy>=3.7.0
+# (luego: python -m spacy download xx_core_web_sm)
+
+# GDELT API client (señales de eventos geopolíticos)
+# Descomentar para instalar:
+# gdeltPyR>=0.1.6
+# pandas>=2.0.0
+
+# Anthropic Claude API (capa editorial LLM opcional)
+# Descomentar para instalar:
+# anthropic>=0.28.0
+
+# ─── VERSIONES DE PYTHON ──────────────────────────────────────────────────────
+# Python >= 3.10 requerido
+# Python 3.11+ recomendado para mejor performance

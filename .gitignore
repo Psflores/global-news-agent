@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+.env
+.venv/
+venv/
+
+# Outputs diarios (no versionar contenido, solo código)
+output/
+logs/
+
+# Logs
+*.log
+
+# macOS
+.DS_Store
+
+# Credenciales y configuración local sensible
+config_local.py
+secrets.py

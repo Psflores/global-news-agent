@@ -1,0 +1,56 @@
+{
+  "_comment": "Configuración del Global News Agent — modificar según necesidad",
+
+  "pipeline": {
+    "top_n": 5,
+    "max_tier": 2,
+    "max_article_age_hours": 24,
+    "min_article_words": 80,
+    "max_articles_per_source": 30,
+    "max_workers": 12
+  },
+
+  "clustering": {
+    "embedding_model": "paraphrase-multilingual-MiniLM-L12-v2",
+    "dbscan_eps": 0.18,
+    "dbscan_min_samples": 2,
+    "minhash_threshold": 0.85,
+    "minhash_num_perm": 128,
+    "max_cluster_size": 100
+  },
+
+  "scoring": {
+    "weights": {
+      "geopolitical_impact": 0.25,
+      "economic_impact": 0.20,
+      "geographic_reach": 0.15,
+      "severity_urgency": 0.15,
+      "source_diversity": 0.10,
+      "topic_persistence": 0.10,
+      "institutional_rel": 0.05
+    },
+    "min_sources_to_rank": 3,
+    "anglocentrism_threshold": 0.60
+  },
+
+  "output": {
+    "output_dir": "output",
+    "formats": ["json", "whatsapp", "email_html", "markdown"],
+    "save_full_articles": false,
+    "max_summary_words": 80
+  },
+
+  "scheduling": {
+    "run_hour_utc": 6,
+    "run_minute_utc": 0,
+    "timezone_display": "America/Argentina/Buenos_Aires"
+  },
+
+  "advanced": {
+    "use_gdelt": false,
+    "gdelt_lookback_hours": 24,
+    "use_claude_editorial_layer": false,
+    "claude_model": "claude-opus-4-6",
+    "verbose_logging": false
+  }
+}
